@@ -14,12 +14,30 @@
  * limitations under the License.
  */
 
-import {Bind} from '../bind-impl';
-import {BindExpression} from '../bind-expression';
-import {BindValidator} from '../bind-validator';
-import {toArray} from '../../../../src/types';
-import {toggleExperiment} from '../../../../src/experiments';
-import {user} from '../../../../src/log';
+import {
+  Bind
+}
+from '../bind-impl';
+import {
+  BindExpression
+}
+from '../bind-expression';
+import {
+  BindValidator
+}
+from '../bind-validator';
+import {
+  toArray
+}
+from '../../../../src/types';
+import {
+  toggleExperiment
+}
+from '../../../../src/experiments';
+import {
+  user
+}
+from '../../../../src/log';
 
 describes.realWin('amp-bind', {
   amp: {
@@ -36,9 +54,9 @@ describes.realWin('amp-bind', {
 
     // Stub validator methods to return true for ease of testing.
     canBindStub = env.sandbox.stub(
-        BindValidator.prototype, 'canBind').returns(true);
+      BindValidator.prototype, 'canBind').returns(true);
     env.sandbox.stub(
-        BindValidator.prototype, 'isResultValid').returns(true);
+      BindValidator.prototype, 'isResultValid').returns(true);
 
     bind = new Bind(env.ampdoc);
   });
@@ -54,6 +72,19 @@ describes.realWin('amp-bind', {
   function createElementWithBinding(binding) {
     const parent = env.win.document.getElementById('parent');
     parent.innerHTML = '<p ' + binding + '></p>';
+    return parent.firstElementChild;
+  }
+
+  /**
+   * @param {!string} binding
+   * @return {!Element}
+   */
+  function createCarouselWithBinding() {
+    const parent = env.win.document.getElementById('parent');
+    parent.innerHTML =
+      '<amp-carousel id="test-carousel" width="1024" height="682" layout="responsive" type="slides" [slide]="selectedSlide" [style]="selectedCarousel == \'testCarousel\' ? \'display:block\' : \'display:none\'">' +
+      '<amp-img src="/examples/img/sample.jpg" width="1024" height="682" layout="responsive"></amp-img>' +
+      '<amp-img src="/examples/img/sample.jpg" width="1024" height="685" layout="responsive"></amp-img> </amp-carousel>'
     return parent.firstElementChild;
   }
 
@@ -132,20 +163,27 @@ describes.realWin('amp-bind', {
   });
 
   it('should verify string attribute bindings in dev mode', () => {
-    env.sandbox.stub(window, 'AMP_MODE', {development: true});
+    env.sandbox.stub(window, 'AMP_MODE', {
+      development: true
+    });
     // Only the initial value for [a] binding does not match.
     createElementWithBinding('[a]="a" [b]="b" b="b"');
-    const errorStub = env.sandbox.stub(user(), 'error').withArgs('amp-bind');
+    const errorStub = env.sandbox.stub(user(), 'error').withArgs(
+      'amp-bind');
     return onBindReady(() => {
       expect(errorStub.callCount).to.equal(1);
     });
   });
 
   it('should verify boolean attribute bindings in dev mode', () => {
-    env.sandbox.stub(window, 'AMP_MODE', {development: true});
+    env.sandbox.stub(window, 'AMP_MODE', {
+      development: true
+    });
     // Only the initial value for [c] binding does not match.
-    createElementWithBinding(`a [a]="true" [b]="false" c="false" [c]="false"`);
-    const errorStub = env.sandbox.stub(user(), 'error').withArgs('amp-bind');
+    createElementWithBinding(
+      `a [a]="true" [b]="false" c="false" [c]="false"`);
+    const errorStub = env.sandbox.stub(user(), 'error').withArgs(
+      'amp-bind');
     return onBindReady(() => {
       expect(errorStub.callCount).to.equal(1);
     });
@@ -169,9 +207,23 @@ describes.realWin('amp-bind', {
     });
   });
 
+  it('should make the carousel visible', () => {
+    const element = createCarouselWithBinding();
+    return onBindReadyAndSetState({
+      selectedSlide: '0',
+      selectedCarousel: 'testCarousel'
+    }, () => {
+      expect(element.getAttribute('slide')).to.equal('0');
+      expect(element.getAttribute('style')).to.equal(
+        'display:block');
+      expect(element.getElementsByTagName('img').length).to.equal(
+        2);
+    });
+  });
+
   it('should support binding to boolean attributes', () => {
     const element =
-        createElementWithBinding('[true]="true" [false]="false" false');
+      createElementWithBinding('[true]="true" [false]="false" false');
     expect(element.getAttribute('true')).to.equal(null);
     expect(element.getAttribute('false')).to.equal('');
     return onBindReadyAndSetState({}, () => {
@@ -207,17 +259,18 @@ describes.realWin('amp-bind', {
   it('should support NOT override internal AMP CSS classes', () => {
     const element = createAmpElementWithBinding(`[class]="['abc']"`);
     expect(toArray(element.classList)).to.deep.equal(
-        ['i-amphtml-foo', '-amp-foo', 'amp-foo']);
+      ['i-amphtml-foo', '-amp-foo', 'amp-foo']);
     return onBindReadyAndSetState({}, () => {
       expect(toArray(element.classList)).to.deep.equal(
-          ['i-amphtml-foo', '-amp-foo', 'amp-foo', 'abc']);
+        ['i-amphtml-foo', '-amp-foo', 'amp-foo', 'abc']);
     });
   });
 
   it('should call mutatedAttributesCallback on AMP elements', () => {
-    const binding = '[onePlusOne]="1+1" [twoPlusTwo]="2+2" twoPlusTwo="4"'
-        + '[add]="true" alreadyAdded [alreadyAdded]="true"'
-        + 'remove [remove]="false" [nothingToRemove]="false"';
+    const binding =
+      '[onePlusOne]="1+1" [twoPlusTwo]="2+2" twoPlusTwo="4"' +
+      '[add]="true" alreadyAdded [alreadyAdded]="true"' +
+      'remove [remove]="false" [nothingToRemove]="false"';
     const element = createAmpElementWithBinding(binding);
     const spy = env.sandbox.spy(element, 'mutatedAttributesCallback');
     return onBindReadyAndSetState({}, () => {
@@ -252,7 +305,8 @@ describes.realWin('amp-bind', {
   });
 
   it('should NOT mutate elements if expression result is unchanged', () => {
-    const binding = `[onePlusOne]="1+1" [class]="'abc'" [text]="'a'+'b'"`;
+    const binding =
+      `[onePlusOne]="1+1" [class]="'abc'" [text]="'a'+'b'"`;
     const element = createElementWithBinding(binding);
     return onBindReadyAndSetState({}, () => {
       expect(element.textContent.length).to.not.equal(0);
