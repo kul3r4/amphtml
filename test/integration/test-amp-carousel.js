@@ -17,7 +17,12 @@
 import {
   createFixtureIframe,
   expectBodyToBecomeVisible,
-} from '../../testing/iframe';
+}
+from '../../testing/iframe';
+import {
+  toggleExperiment
+}
+from '../../src/experiments';
 
 describe.skip('integration amp-carousel', () => {
 
@@ -35,10 +40,10 @@ describe.skip('integration amp-carousel', () => {
 
   it('should be present', () => {
     expect(fixture.doc.querySelectorAll('amp-carousel'))
-        .to.have.length.above(0);
+      .to.have.length.above(0);
     return fixture.awaitEvent('amp:load:start', 1).then(() => {
       expect(fixture.doc.querySelectorAll('amp-carousel'))
-          .to.have.length.above(0);
+        .to.have.length.above(0);
     });
   });
 
@@ -49,16 +54,18 @@ describe.skip('integration amp-carousel', () => {
     });
 
     it('should only have the next button enabled ' +
-       'when on first item', () => {
-      return fixture.awaitEvent('amp:load:start', 1).then(() => {
-        fixture.doc.body.classList.add('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-1');
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.be.hidden;
-        expect(nextBtn).to.be.visible;
+      'when on first item', () => {
+        return fixture.awaitEvent('amp:load:start', 1).then(() => {
+          fixture.doc.body.classList.add('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-1');
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.be.hidden;
+          expect(nextBtn).to.be.visible;
+        });
       });
-    });
 
     it('should not be able to go past the first or last item', () => {
       return fixture.awaitEvent('amp:load:start', 1).then(() => {
@@ -66,8 +73,10 @@ describe.skip('integration amp-carousel', () => {
         const amp = fixture.doc.querySelector('#carousel-1');
         const impl = amp.implementation_;
 
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
+        const prevBtn = amp.querySelector(
+          '.amp-carousel-button-prev');
+        const nextBtn = amp.querySelector(
+          '.amp-carousel-button-next');
         prevBtn.style.visibility = 'visible';
         nextBtn.style.visibility = 'visible';
         expect(prevBtn).to.be.visible;
@@ -88,108 +97,121 @@ describe.skip('integration amp-carousel', () => {
     });
 
     it('(type=slide) should only have the next button enabled when on ' +
-       'first item', () => {
-      return fixture.awaitEvent('amp:load:start', 4).then(() => {
-        fixture.doc.body.classList.add('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-4');
+      'first item', () => {
+        return fixture.awaitEvent('amp:load:start', 4).then(() => {
+          fixture.doc.body.classList.add('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-4');
 
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.be.hidden;
-        expect(nextBtn).to.be.visible;
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.be.hidden;
+          expect(nextBtn).to.be.visible;
+        });
       });
-    });
 
     it('should only have the prev button enabled ' +
-       'when on last item', () => {
-      return fixture.awaitEvent('amp:load:start', 1).then(() => {
-        fixture.doc.body.classList.add('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-1');
-        const impl = amp.implementation_;
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.have.class('amp-disabled');
-        expect(nextBtn).to.not.have.class('amp-disabled');
-        impl.go(1, false);
-        impl.go(1, false);
-        impl.go(1, false);
-        expect(prevBtn).to.not.have.class('amp-disabled');
-        expect(nextBtn).to.have.class('amp-disabled');
+      'when on last item', () => {
+        return fixture.awaitEvent('amp:load:start', 1).then(() => {
+          fixture.doc.body.classList.add('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-1');
+          const impl = amp.implementation_;
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.have.class('amp-disabled');
+          expect(nextBtn).to.not.have.class('amp-disabled');
+          impl.go(1, false);
+          impl.go(1, false);
+          impl.go(1, false);
+          expect(prevBtn).to.not.have.class('amp-disabled');
+          expect(nextBtn).to.have.class('amp-disabled');
+        });
       });
-    });
 
     it('(type=slides) should only have the prev button enabled when ' +
-       'on last item', () => {
-      return fixture.awaitEvent('amp:load:start', 4).then(() => {
-        fixture.doc.body.classList.add('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-4');
-        const impl = amp.implementation_;
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.have.class('amp-disabled');
-        expect(nextBtn).to.not.have.class('amp-disabled');
-        impl.go(1, false);
-        expect(prevBtn).to.not.have.class('amp-disabled');
-        expect(nextBtn).to.have.class('amp-disabled');
+      'on last item', () => {
+        return fixture.awaitEvent('amp:load:start', 4).then(() => {
+          fixture.doc.body.classList.add('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-4');
+          const impl = amp.implementation_;
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.have.class('amp-disabled');
+          expect(nextBtn).to.not.have.class('amp-disabled');
+          impl.go(1, false);
+          expect(prevBtn).to.not.have.class('amp-disabled');
+          expect(nextBtn).to.have.class('amp-disabled');
+        });
       });
-    });
 
-    it('(type=slides loop) should always have a prev and next button be ' +
-       'able to get past the first and last item', () => {
-      return fixture.awaitEvent('amp:load:start', 7).then(() => {
-        fixture.doc.body.classList.add('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-7');
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.not.have.class('amp-disabled');
-        expect(nextBtn).to.not.have.class('amp-disabled');
-        nextBtn.click();
-        expect(prevBtn).to.not.have.class('amp-disabled');
-        expect(nextBtn).to.not.have.class('amp-disabled');
-        nextBtn.click();
-        expect(prevBtn).to.not.have.class('amp-disabled');
-        expect(nextBtn).to.not.have.class('amp-disabled');
-        nextBtn.click();
-        expect(prevBtn).to.not.have.class('amp-disabled');
-        expect(nextBtn).to.not.have.class('amp-disabled');
-        nextBtn.click();
-        expect(prevBtn).to.not.have.class('amp-disabled');
-        expect(nextBtn).to.not.have.class('amp-disabled');
-        nextBtn.click();
-        expect(prevBtn).to.not.have.class('amp-disabled');
-        expect(nextBtn).to.not.have.class('amp-disabled');
+    it(
+      '(type=slides loop) should always have a prev and next button be ' +
+      'able to get past the first and last item', () => {
+        return fixture.awaitEvent('amp:load:start', 7).then(() => {
+          fixture.doc.body.classList.add('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-7');
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.not.have.class('amp-disabled');
+          expect(nextBtn).to.not.have.class('amp-disabled');
+          nextBtn.click();
+          expect(prevBtn).to.not.have.class('amp-disabled');
+          expect(nextBtn).to.not.have.class('amp-disabled');
+          nextBtn.click();
+          expect(prevBtn).to.not.have.class('amp-disabled');
+          expect(nextBtn).to.not.have.class('amp-disabled');
+          nextBtn.click();
+          expect(prevBtn).to.not.have.class('amp-disabled');
+          expect(nextBtn).to.not.have.class('amp-disabled');
+          nextBtn.click();
+          expect(prevBtn).to.not.have.class('amp-disabled');
+          expect(nextBtn).to.not.have.class('amp-disabled');
+          nextBtn.click();
+          expect(prevBtn).to.not.have.class('amp-disabled');
+          expect(nextBtn).to.not.have.class('amp-disabled');
+        });
       });
-    });
 
     it('should not have any buttons enabled when theres only a single ' +
-       'item', () => {
-      return fixture.awaitEvent('amp:load:start', 2).then(() => {
-        fixture.doc.body.classList.add('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-2');
+      'item', () => {
+        return fixture.awaitEvent('amp:load:start', 2).then(() => {
+          fixture.doc.body.classList.add('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-2');
 
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.be.hidden;
-        expect(nextBtn).to.be.hidden;
-        expect(prevBtn).to.have.class('amp-disabled');
-        expect(nextBtn).to.have.class('amp-disabled');
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.be.hidden;
+          expect(nextBtn).to.be.hidden;
+          expect(prevBtn).to.have.class('amp-disabled');
+          expect(nextBtn).to.have.class('amp-disabled');
+        });
       });
-    });
 
     it('(type=slides) should not have any buttons enabled when theres ' +
-       'only a single item', () => {
-      return fixture.awaitEvent('amp:load:start', 5).then(() => {
-        fixture.doc.body.classList.add('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-5');
+      'only a single item', () => {
+        return fixture.awaitEvent('amp:load:start', 5).then(() => {
+          fixture.doc.body.classList.add('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-5');
 
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.be.hidden;
-        expect(nextBtn).to.be.hidden;
-        expect(prevBtn).to.have.class('amp-disabled');
-        expect(nextBtn).to.have.class('amp-disabled');
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.be.hidden;
+          expect(nextBtn).to.be.hidden;
+          expect(prevBtn).to.have.class('amp-disabled');
+          expect(nextBtn).to.have.class('amp-disabled');
+        });
       });
-    });
   });
 
   describe('when amp-mode-mouse class is not on body', () => {
@@ -198,10 +220,13 @@ describe.skip('integration amp-carousel', () => {
       return fixture.awaitEvent('amp:load:start', 1).then(() => {
         fixture.doc.body.classList.remove('amp-mode-mouse');
         const amp = fixture.doc.querySelector('#carousel-1');
-        expect(fixture.doc.body).to.not.have.class('amp-mode-mouse');
+        expect(fixture.doc.body).to.not.have.class(
+          'amp-mode-mouse');
 
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
+        const prevBtn = amp.querySelector(
+          '.amp-carousel-button-prev');
+        const nextBtn = amp.querySelector(
+          '.amp-carousel-button-next');
         expect(prevBtn).to.be.hidden;
         expect(nextBtn).to.be.hidden;
       });
@@ -211,10 +236,13 @@ describe.skip('integration amp-carousel', () => {
       return fixture.awaitEvent('amp:load:start', 4).then(() => {
         fixture.doc.body.classList.remove('amp-mode-mouse');
         const amp = fixture.doc.querySelector('#carousel-4');
-        expect(fixture.doc.body).to.not.have.class('amp-mode-mouse');
+        expect(fixture.doc.body).to.not.have.class(
+          'amp-mode-mouse');
 
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
+        const prevBtn = amp.querySelector(
+          '.amp-carousel-button-prev');
+        const nextBtn = amp.querySelector(
+          '.amp-carousel-button-next');
         expect(prevBtn).to.be.hidden;
         expect(nextBtn).to.be.hidden;
       });
@@ -224,37 +252,76 @@ describe.skip('integration amp-carousel', () => {
   describe('when amp-carousel has explicit `controls` attribute', () => {
 
     it('should have visible buttons even when `amp-mode-mouse` ' +
-       'is not on body', () => {
-      return fixture.awaitEvent('amp:load:start', 3).then(() => {
-        fixture.doc.body.classList.remove('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-3');
-        expect(fixture.doc.body).to.not.have.class('amp-mode-mouse');
+      'is not on body', () => {
+        return fixture.awaitEvent('amp:load:start', 3).then(() => {
+          fixture.doc.body.classList.remove('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-3');
+          expect(fixture.doc.body).to.not.have.class(
+            'amp-mode-mouse');
 
-        expect(amp).to.have.attribute('controls');
-        expect(amp).to.have.class('-amp-carousel-has-controls');
+          expect(amp).to.have.attribute('controls');
+          expect(amp).to.have.class('-amp-carousel-has-controls');
 
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.be.hidden;
-        expect(nextBtn).to.be.visible;
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.be.hidden;
+          expect(nextBtn).to.be.visible;
+        });
       });
-    });
 
     it('(type=slides) should have visible buttons ' +
-       'even when `amp-mode-mouse` is not on body', () => {
-      return fixture.awaitEvent('amp:load:start', 6).then(() => {
-        fixture.doc.body.classList.remove('amp-mode-mouse');
-        const amp = fixture.doc.querySelector('#carousel-6');
-        expect(fixture.doc.body).to.not.have.class('amp-mode-mouse');
+      'even when `amp-mode-mouse` is not on body', () => {
+        return fixture.awaitEvent('amp:load:start', 6).then(() => {
+          fixture.doc.body.classList.remove('amp-mode-mouse');
+          const amp = fixture.doc.querySelector('#carousel-6');
+          expect(fixture.doc.body).to.not.have.class(
+            'amp-mode-mouse');
 
-        expect(amp).to.have.attribute('controls');
-        expect(amp).to.have.class('-amp-carousel-has-controls');
+          expect(amp).to.have.attribute('controls');
+          expect(amp).to.have.class('-amp-carousel-has-controls');
 
-        const prevBtn = amp.querySelector('.amp-carousel-button-prev');
-        const nextBtn = amp.querySelector('.amp-carousel-button-next');
-        expect(prevBtn).to.be.hidden;
-        expect(nextBtn).to.be.visible;
+          const prevBtn = amp.querySelector(
+            '.amp-carousel-button-prev');
+          const nextBtn = amp.querySelector(
+            '.amp-carousel-button-next');
+          expect(prevBtn).to.be.hidden;
+          expect(nextBtn).to.be.visible;
+        });
+      });
+  });
+});
+describe.configure().retryOnSaucelabs().run('amp-carousel interactions',
+  function() {
+    let fixture;
+    beforeEach(() => {
+      return createFixtureIframe('test/fixtures/carousels.html', 1000)
+        .then(f => {
+          fixture = f;
+        });
+    });
+
+    describe('when amp-carousel is used together with amp-bind', () => {
+      it('should show the right slide when used variable changes value', () => {
+        toggleExperiment(fixture.win, 'amp-bind', true);
+        return fixture.awaitEvent('amp:load:start', 1).then(() => {
+          const clickEv = new Event('tap');
+          fixture.doc.querySelector('button').dispatchEvent(
+            clickEv);
+          fixture.doc.querySelector('button').click();
+          return fixture.awaitEvent('amp:load:start', 3).then(() => {
+            var secondSlide = fixture.doc.getElementById(
+              "img2");
+            expect(secondSlide.getAttribute('aria-hidden')).to
+              .equal('false');
+            var firstSlide = fixture.doc.getElementById(
+              "img1");
+            expect(firstSlide.getAttribute('aria-hidden')).to
+              .equal('true');
+
+          });
+        });
       });
     });
   });
-});
