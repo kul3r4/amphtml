@@ -23,7 +23,7 @@
 
   <h2>XHR</h2>
   <p [text]="myState.bindXhrResult">This text will be updated with XHR results.</p>
-  <form method="GET" action="/bind/form/get" action-xhr="/bind/form/get" target="_blank"
+  <form method="POST" action="/bind/form/get" action-xhr="/bind/form/get" target="_blank"
       on="submit-success:myState">
     <input type="submit" value="Submit">
   </form>
