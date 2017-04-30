@@ -237,6 +237,7 @@ function createElementRules_() {
       'src': {
         'allowedProtocols': {
           'https': true,
+          'allow_relative': true,
         },
       },
     },
